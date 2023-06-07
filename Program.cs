@@ -1,4 +1,5 @@
 using ApiMinimalCatalog.Context;
+using ApiMinimalCatalog.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 var app = builder.Build();
+
+//Endpoints
+
+app.MapPost("/categories", async (Category category, AppDbContext db) =>
+{
+    db.Categories.Add(category);
+    await db.SaveChangesAsync();
+    return Results.Created($"/categories/{category.Id}", category);
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
