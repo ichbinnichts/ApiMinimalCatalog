@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-//Endpoints
+// ---------- Category Endpoints ----------
 
 app.MapPost("/categories", async (Category category, AppDbContext db) =>
 {
@@ -28,7 +28,7 @@ app.MapPost("/categories", async (Category category, AppDbContext db) =>
 
 app.MapGet("/categories", async (AppDbContext db) =>
 {
-    await db.Categories.ToListAsync();
+    return await db.Categories.ToListAsync();
 });
 
 app.MapGet("/categories/{id:int}", async (int id, AppDbContext db) =>
@@ -48,6 +48,31 @@ app.MapPut("/categories/{id:int}", async (int id, Category category, AppDbContex
     await db.SaveChangesAsync();
     return Results.Ok(categoryDB);
 });
+
+app.MapDelete("/categories/{id:int}", async (int id, AppDbContext db) =>
+{
+    var category = await db.Categories.FindAsync(id);
+    if (category is null) return Results.NotFound();
+    db.Remove(category);
+    await db.SaveChangesAsync();
+    return Results.Ok();
+});
+
+// ---------- Product Endpoints ----------
+
+app.MapGet("/products", async (AppDbContext db) =>
+{
+    return await db.Products.ToListAsync();
+});
+
+app.MapGet("/products/{id:int}", async (int id, AppDbContext db) =>
+{
+    var product = await db.Products.FindAsync(id);
+    if (product is null) return Results.NotFound();
+    return Results.Ok(product);
+});
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
