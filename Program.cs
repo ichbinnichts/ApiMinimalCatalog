@@ -56,7 +56,7 @@ app.MapDelete("/categories/{id:int}", async (int id, AppDbContext db) =>
     if (category is null) return Results.NotFound();
     db.Remove(category);
     await db.SaveChangesAsync();
-    return Results.Ok();
+    return Results.NoContent();
 });
 
 // ---------- Product Endpoints ----------
@@ -90,6 +90,15 @@ app.MapPut("/products/{id:int}", async (int id, Product product, AppDbContext db
     productDB.Description = product.Description;
     await db.SaveChangesAsync();
     return Results.Ok(productDB);
+});
+
+app.MapDelete("/products/{id:int}", async (int id, AppDbContext db) =>
+{
+    var product = await db.Products.FindAsync(id);
+    if (product is null) return Results.NotFound();
+    db.Products.Remove(product);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
 });
 
 
