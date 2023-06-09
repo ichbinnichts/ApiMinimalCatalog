@@ -83,7 +83,7 @@ app.MapGet("/categories/{id:int}", async (int id, AppDbContext db) =>
 {
     return await db.Categories.FindAsync(id)
         is Category category ? Results.Ok(category) : Results.NotFound();
-}).RequireAuthorization();
+});
 
 app.MapPut("/categories/{id:int}", async (int id, Category category, AppDbContext db) =>
 {
@@ -111,7 +111,7 @@ app.MapDelete("/categories/{id:int}", async (int id, AppDbContext db) =>
 app.MapGet("/products", async (AppDbContext db) =>
 {
     return await db.Products.ToListAsync();
-});
+}).RequireAuthorization();
 
 app.MapGet("/products/{id:int}", async (int id, AppDbContext db) =>
 {
