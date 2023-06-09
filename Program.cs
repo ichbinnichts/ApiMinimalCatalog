@@ -2,6 +2,7 @@ using ApiMinimalCatalog.Context;
 using ApiMinimalCatalog.Models;
 using ApiMinimalCatalog.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +46,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// ---------- Login Endpoint ----------
+
+app.MapPost("/login", [AllowAnonymous](UserModel user, ITokenService tokenService) =>
+{
+    if (user is null) return Results.BadRequest();
+    if(user.Username == "nathanfaria" && user.Password == "mysecretpassword")
+    {
+        var tokenString = tokenService.GenerateToken(app.Configuration["Jwt:Key"],
+            app.Configuration["Jwt:Issuer"],
+            user);
+        return Results.Ok(new { token = tokenString });
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+})
 
 // ---------- Category Endpoints ----------
 
