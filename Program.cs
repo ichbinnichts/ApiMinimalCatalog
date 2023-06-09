@@ -49,10 +49,10 @@ var app = builder.Build();
 
 // ---------- Login Endpoint ----------
 
-app.MapPost("/login", [AllowAnonymous](UserModel user, ITokenService tokenService) =>
+app.MapPost("/login", [AllowAnonymous] (UserModel user, ITokenService tokenService) =>
 {
     if (user is null) return Results.BadRequest();
-    if(user.Username == "nathanfaria" && user.Password == "mysecretpassword")
+    if (user.Username == "nathanfaria" && user.Password == "mysecretpassword")
     {
         var tokenString = tokenService.GenerateToken(app.Configuration["Jwt:Key"],
             app.Configuration["Jwt:Issuer"],
@@ -63,7 +63,7 @@ app.MapPost("/login", [AllowAnonymous](UserModel user, ITokenService tokenServic
     {
         return Results.BadRequest();
     }
-})
+});
 
 // ---------- Category Endpoints ----------
 
@@ -77,13 +77,13 @@ app.MapPost("/categories", async (Category category, AppDbContext db) =>
 app.MapGet("/categories", async (AppDbContext db) =>
 {
     return await db.Categories.ToListAsync();
-});
+}).RequireAuthorization();
 
 app.MapGet("/categories/{id:int}", async (int id, AppDbContext db) =>
 {
     return await db.Categories.FindAsync(id)
         is Category category ? Results.Ok(category) : Results.NotFound();
-});
+}).RequireAuthorization();
 
 app.MapPut("/categories/{id:int}", async (int id, Category category, AppDbContext db) =>
 {
