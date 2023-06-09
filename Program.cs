@@ -1,5 +1,6 @@
 using ApiMinimalCatalog.Context;
 using ApiMinimalCatalog.Models;
+using ApiMinimalCatalog.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
+
+// ---------- Register Token JWT ----------
+
+builder.Services.AddSingleton<ITokenService>(new TokenService());
 
 var app = builder.Build();
 
