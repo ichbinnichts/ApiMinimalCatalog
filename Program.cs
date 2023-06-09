@@ -37,6 +37,17 @@ app.MapGet("/categories/{id:int}", async (int id, AppDbContext db) =>
         is Category category ? Results.Ok(category) : Results.NotFound();
 });
 
+app.MapPut("/categories/{id:int}", async (int id, Category category, AppDbContext db) =>
+{
+    if (id != category.Id) return Results.BadRequest();
+    var categoryDB = await db.Categories.FindAsync(id);
+    if (categoryDB is null) return Results.NotFound();
+
+    categoryDB.Name = category.Name;
+    categoryDB.Description = category.Description;
+    await db.SaveChangesAsync();
+    return Results.Ok(categoryDB);
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
