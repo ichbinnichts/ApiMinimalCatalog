@@ -80,6 +80,18 @@ app.MapPost("/products", async (Product product, AppDbContext db) =>
     return Results.Ok(product);
 });
 
+app.MapPut("/products/{id:int}", async (int id, Product product, AppDbContext db) =>
+{
+    if (id != product.Id) return Results.BadRequest();
+    var productDB = await db.Products.FindAsync(id);
+    if (productDB is null) return Results.NotFound();
+
+    productDB.Name = product.Name;
+    productDB.Description = product.Description;
+    await db.SaveChangesAsync();
+    return Results.Ok(productDB);
+});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
