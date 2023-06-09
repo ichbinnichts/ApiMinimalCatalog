@@ -1,5 +1,6 @@
 using ApiMinimalCatalog.Context;
 using ApiMinimalCatalog.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,13 @@ app.MapGet("/products/{id:int}", async (int id, AppDbContext db) =>
 {
     var product = await db.Products.FindAsync(id);
     if (product is null) return Results.NotFound();
+    return Results.Ok(product);
+});
+
+app.MapPost("/products", async (Product product, AppDbContext db) =>
+{
+    db.Products.Add(product);
+    await db.SaveChangesAsync();
     return Results.Ok(product);
 });
 
