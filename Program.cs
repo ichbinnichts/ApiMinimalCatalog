@@ -1,4 +1,5 @@
 using ApiMinimalCatalog.ApiEndpoints;
+using ApiMinimalCatalog.AppServicesExtensions;
 using ApiMinimalCatalog.Context;
 using ApiMinimalCatalog.Models;
 using ApiMinimalCatalog.Services;
@@ -95,11 +96,11 @@ app.MapProduct();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+var env = app.Environment;
+
+app.UseExceptionHandling(env)
+    .UseSwaggerMiddleware()
+    .UseAppCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
